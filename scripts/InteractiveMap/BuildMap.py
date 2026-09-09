@@ -55,8 +55,37 @@ for _, row in stations.iterrows():
     ).add_to(stations_layer)
 
 
+
+
 stations_layer.add_to(m)
 
+#Gap analysis filter (ev demand vs existing chargers)
+gap_layer = folium.FeatureGroup(name="EV gap Analysis")
+
+for _, row in gap_with_coords.iterrows():
+    if pd.isna(row["INTPTLAT"]) or pd.isna(row["INTPTLONG"]):
+        continue
+    
+    city = row["city"] if pd.notna(row["city"]) else "(unknown)"
+    color = "blue" if city in false_positives else "brown"
+
+    popup_text = (
+        f"{city} (zip {row['ZIP Code']})<br>"
+        f"EVs: {row['ev_count']}<br>"
+        f"Stations: {row['station_count']}<br>"
+        f"Gap: {row['evs_per_station']:.2f}"
+    )
+
+    folium.CircleMarker(
+        location = [float(row["INTPTLAT"]), float(row["INTPTLONG"])],
+        radius = 8, 
+        color = color,
+        fill = True,
+        fill_opacity=0.7,
+        popup=popup_text,
+    ).add_to(gap_layer)
+
+gap_layer.add_to(m)
 
 folium.LayerControl().add_to(m)
 
