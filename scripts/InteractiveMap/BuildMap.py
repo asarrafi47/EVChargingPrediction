@@ -35,7 +35,39 @@ tiles="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boun
     control=True,
 ).add_to(m)
 
+
+
+#Charging Stations layer
+stations_layer = folium.FeatureGroup(name="Charging Stations")
+for _, row in stations.iterrows():
+    if pd.isna(row["latitude"]) or pd.isna(row["longitude"]):
+        continue
+    
+    popup_text = f"{row.get("station_name", "Unknown")}<br>Network:{row.get("ev_network","Unknown")}"
+    
+    folium.CircleMarker(
+        location = [float(row["latitude"]), float(row["longitude"])],
+        radius = 3, 
+        color = "red",
+        fill = True,
+        fill_opacity=0.6,
+        popup=popup_text,
+    ).add_to(stations_layer)
+
+
+stations_layer.add_to(m)
+
+
 folium.LayerControl().add_to(m)
+
+
+
+
+
+
+
+
+
 
 
 m.save("../../results/oc_ev_map.html")
