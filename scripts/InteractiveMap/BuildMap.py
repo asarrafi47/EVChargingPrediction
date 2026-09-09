@@ -27,6 +27,17 @@ folium.TileLayer(
     name="Satellite",
 ).add_to(m)
 
+#labels
+folium.TileLayer(
+tiles="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",    attr="Esri",
+    name="Labels: Cities/roads",
+    overlay=True,
+    control=True,
+).add_to(m)
+
+folium.LayerControl().add_to(m)
+
+
 m.save("../../results/oc_ev_map.html")
 print("saved ../../results/oc_ev_map.html")
 
